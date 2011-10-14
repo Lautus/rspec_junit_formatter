@@ -26,7 +26,6 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
     super
 
     examples_by_path = examples.group_by { |example| find_path(example) }
-    p examples_by_path.keys
     common_prefix_length = examples_by_path.keys.map { |path| path.split('/').size }.min - 3
     common_prefix_length = 0 if common_prefix_length < 0
 
