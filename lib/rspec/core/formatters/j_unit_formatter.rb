@@ -12,11 +12,22 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
     super
   end
 
+  def find_caller(example)
+    example.metadata[:caller].find { |l| l !~ /(\/lib\/rspec\/core)|(\/lib\/mielie\/)/ }
+  end
+
+  def find_path(example)
+    find_caller(example) =~ /(.+?):(\d+)(|:\d+)/
+    $1
+  end
+    
+
   def dump_summary duration, example_count, failure_count, pending_count
     super
 
-    examples_by_path = examples.group_by { |example| example.file_path }
-    common_prefix_length = examples_by_path.keys.map { |path| path.split('/').size }.min - 2
+    examples_by_path = examples.group_by { |example| find_path(example) }
+    p examples_by_path.keys
+    common_prefix_length = examples_by_path.keys.map { |path| path.split('/').size }.min - 3
     common_prefix_length = 0 if common_prefix_length < 0
 
     xml.instruct!
